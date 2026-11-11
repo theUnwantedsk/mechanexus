@@ -1,0 +1,11 @@
+{
+  "mode": "structured",
+  "granularity": "detailed",
+  "commitStrategy": "atomic",
+  "subagentProfile": "quality",
+  "techStack": {
+    "frontend": "React (Vite) + Tailwind CSS + Lucide Icons",
+    "backend": "Supabase (PostgreSQL + Auth + Storage + RLS + Edge Functions)",
+    "hosting": "Vercel"
+  }
+}
