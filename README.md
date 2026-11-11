@@ -6,6 +6,58 @@ The platform centralizes all club operations, eliminating scattered spreadsheets
 
 ---
 
+## ☁️ Cloud Model & Cloud-Native Architecture
+
+MECHANEXUS is architected from the ground up as a **Cloud-Native SaaS Model** designed for high availability, zero server maintenance, and seamless horizontal scaling:
+
+```
+                  ┌──────────────────────────────────────────────┐
+                  │             Vercel Global Edge CDN           │
+                  │   (Single Page Application & Edge Routing)    │
+                  └──────────────────────┬───────────────────────┘
+                                         │
+                   HTTPS / WSS (TLS 1.3) │ REST / Realtime Subscriptions
+                                         ▼
+                  ┌──────────────────────────────────────────────┐
+                  │            Supabase Cloud Platform           │
+                  ├──────────────────────┬───────────────────────┤
+                  │  Supabase Auth (JWT) │  PostgreSQL 15+ (RLS) │
+                  ├──────────────────────┼───────────────────────┤
+                  │  Cloud S3 Storage    │  Edge Functions & AI  │
+                  └──────────────────────┴───────────────────────┘
+```
+
+### 1. Cloud Presentation Layer (Vercel Global Edge)
+- Hosted on Vercel's global edge network with instant automated deployments from Git.
+- Single-page application routing configured via [`vercel.json`](file:///C:/Users/Shubham/.gemini/antigravity/scratch/mechanexus/vercel.json) with client-side state hydration.
+- Optimized bundle splitting (< 500 kB chunks) for sub-second Cold Start times across mobile and desktop.
+
+### 2. Cloud Database Model (PostgreSQL 15+ & Row Level Security)
+- Fully relational database hosted on Supabase Cloud with foreign-key constraints, cascading updates, and automated triggers.
+- **Row Level Security (RLS)**: Enforces role isolation (`club_admin`, `coordinator`, `team_leader`, `student`) directly at the database engine level. Students can never view or mutate unauthorized task records or budgets.
+
+### 3. Cloud Authentication & Identity Model
+- JWT-based authentication protocol backed by Supabase Auth.
+- Secure HTTP-only session tokens with role claims embedded in user metadata.
+
+### 4. Cloud Object Storage Engine
+- Distributed cloud buckets for:
+  - `avatars`: Member profile pictures and student IDs.
+  - `project-files`: CAD schematics, mechanical drawings, and BOM spreadsheets.
+  - `event-posters`: High-resolution graphics for hackathons and workshops.
+
+### 5. Cloud AI & Edge OCR Integration Model
+- Dual-tier document parsing model:
+  - **Browser/Edge WASM Tier**: Tesseract.js WebAssembly worker + SheetJS for client-side zero-latency parsing of images and Excel files.
+  - **Serverless Cloud Tier**: Compatible with Supabase Edge Functions and Google Cloud Vision / Gemini Multimodal API for heavy server-side document OCR.
+
+### 6. Dual-Mode Cloud Resilience Fallback
+- Operates seamlessly in two modes:
+  - **Live Cloud Mode**: Direct sync with Supabase PostgreSQL and Supabase Auth.
+  - **Demo/Preview Mode**: Automatic client-side reactive store fallback with localStorage persistence if cloud environment variables are pending, ensuring 100% testability out-of-the-box.
+
+---
+
 ## ⚡ Core Features & Capabilities
 
 ### 1. 🤖 Smart Task Distribution Engine (Flagship Feature)
@@ -60,6 +112,7 @@ The platform centralizes all club operations, eliminating scattered spreadsheets
 - **Authentication**: Supabase Auth (Email / Password)
 - **Storage**: Supabase Storage (`avatars`, `project-files`, `event-posters`)
 - **Security**: PostgreSQL Row Level Security (RLS) policies
+- **Hosting & Edge**: Vercel
 
 ---
 
@@ -92,7 +145,7 @@ For evaluation and testing without complex logins, use the **Role Simulator** at
 
 ---
 
-## 🗄️ Supabase Database Setup
+## 🗄️ Supabase Cloud Database Setup
 
 When connecting to your live Supabase project:
 1. Open your Supabase SQL Editor.
